@@ -11,6 +11,15 @@ Please make sure you have a static IP assigned to your router.
 ## First login
 
 ```
+sudo nano /etc/default/console-setup # Bigger font
+      FONTFACE="Terminus"
+      FONTSIZE="16x32"
+sudo update-initramfs -u
+reboot
+```
+
+
+```
 sudo apt-get update                                       # Update the system
 systemctl disable systemd-networkd-wait-online.service    # Disable the 2 minutes wait that Ubuntu Server spend trying waiting for the
 systemctl mask systemd-networkd-wait-online.service       # internet
@@ -39,4 +48,4 @@ ssh {user}@{IP}
 ## Nano shortcuts
 
 - Copy: `Alt`+`Shift`+`6`
-- Dellete all marked: `Alt`+`A` 
+- Dellete all marked: `Ctrl`+`Shift`+`K` 
