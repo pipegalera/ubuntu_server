@@ -1,5 +1,7 @@
 # ubuntu_server
 
+Please make sure you have a static IP assigned to your router.
+
 ## USB stick installation options
 
 - [X] Search for third-party drivers
@@ -26,3 +28,15 @@ nvidia-driver-550
 ```
 
 [Source](https://askubuntu.com/questions/819117/how-can-i-get-autologin-at-startup-working-on-ubuntu-server-16-04-1)
+
+
+## Connect via SSH
+
+```
+ssh {user}@{IP}
+```
+
+## Nano shortcuts
+
+- Copy: `Alt`+`Shift`+`6`
+- Dellete all marked: `Alt`+`A` 
