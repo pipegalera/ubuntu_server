@@ -24,6 +24,7 @@ sudo apt-get update                                       # Update the system
 systemctl disable systemd-networkd-wait-online.service    # Disable the 2 minutes wait that Ubuntu Server spend trying waiting for the
 systemctl mask systemd-networkd-wait-online.service       # internet
 sudo apt install network-manager                          # Install the network manager for wifi
+sudo apt install net-tools
 ```
 
 Follow: https://ubuntu.com/core/docs/networkmanager/configure-wifi-connections
@@ -32,14 +33,14 @@ Follow: https://ubuntu.com/core/docs/networkmanager/configure-wifi-connections
 
 ```
 sudo add-apt-repository ppa:graphics-drivers/ppa
-sudo ubuntu-drivers
-nvidia-driver-550
+ubuntu-drivers devices
+sudo ubuntu-drivers install --gpgpu nvidia:550
+sudo apt install nvidia-utils-550
 ```
-
-[Source](https://askubuntu.com/questions/819117/how-can-i-get-autologin-at-startup-working-on-ubuntu-server-16-04-1)
 
 
 ## Connect via SSH
+
 
 ```
 ssh {user}@{IP}
