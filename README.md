@@ -48,7 +48,9 @@ sudo  nano /etc/ssh/sshd_config
 sudo systemctl reload sshd
 ```
 
-- In the local client:
+- In the local client
+
+Copy into `.ssh/config`:
 
 ```
 Host {what ever shortcut name you want to use} 
