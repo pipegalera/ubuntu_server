@@ -130,7 +130,6 @@ sudo apt install neofetch
 sudo apt install net-tools
 sudo add-apt-repository ppa:graphics-drivers/ppa
 sudo ubuntu-drivers install nvidia:550 # The server version of 550 is essencially the same driver.
-
 ```
 
 ## Nano shortcuts
