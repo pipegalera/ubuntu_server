@@ -100,10 +100,10 @@ bantime = 10m
 
 ### Changing the default Port 22
 
-By default, the firewall is inactive (check `sudo ufw status`).
+We'll activate the firewall and only allow the connection via the port we select.  
 
 ```
-sudo ufw enable
+sudo ufw enable # By default, the firewall is inactive (check `sudo ufw status`)
 sudo cp /etc/ssh/sshd_config /etc/ssh/sshd_config.bak #Backup current sshd setup
 ->           Port {whatever set of 5 digits}
 sudo ufw allow {whatever set of 5 digits}/tcp
@@ -111,7 +111,7 @@ sudo ufw allow {whatever set of 5 digits}/tcp
 
 ## Configure client access for easy log in
 
-Edit the `.ssh/config` file with the following, so you can access the server quickly and easy from the server.
+Edit the `.ssh/config` file with the following, so you can access the server quickly and easy from the client.
 
 ```
 Host {host} 
@@ -122,7 +122,6 @@ Host {host}
   StrictHostKeyChecking no
 ```
 Setting this file 
-
 
 ## Packages to install after ssh connection
 
