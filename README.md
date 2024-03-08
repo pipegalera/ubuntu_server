@@ -8,7 +8,7 @@ Please make sure you have a static IP assigned to your router.
 - [ ] Set up this disk as an LVM group
 - [X] Install OpenSSH server
 
-## First login
+## First Server login
 
 ```
 sudo nano /etc/default/console-setup # Bigger font
@@ -18,29 +18,40 @@ sudo update-initramfs -u
 reboot
 ```
 
+## Initial config 
+
+We'll:
+
+1. Update the system.
+2. Avoid the system waiting 2 minutues every booth for the ethernet connection (server will be connected via WiFi).
+3. Avoid the system to go to sleep/suspend/hibernate causing ssh to time out.
+4. Install a network manager to connect via WiFi. Follow: https://ubuntu.com/core/docs/networkmanager/configure-wifi-connections once installed.
 
 ```
-sudo apt-get update                                       # Update the system
-systemctl disable systemd-networkd-wait-online.service    # Disable the 2 minutes wait that Ubuntu Server spend trying waiting for the
-systemctl mask systemd-networkd-wait-online.service       # internet
-sudo apt install network-manager                          # Install the network manager for wifi
+sudo apt-get update                                       
+systemctl disable systemd-networkd-wait-online.service    
+systemctl mask systemd-networkd-wait-online.service
+sudo systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.target     
+sudo apt install network-manager                          
 ```
-
-Follow: https://ubuntu.com/core/docs/networkmanager/configure-wifi-connections
 
 ## Configure SSH for secure remote connection
 
-Here we make sure that the client have: 
 
-1. An encripted key.
-2. The password of the server.
+Before continuing, make sure you can connect to the server with any computer in the network via `ssh {server username}@{server ip}`. You you connect, start preparing the network security. Since the server will be exposed to the internet outside of your local network, network security protection is essential.
 
-From the server side, we need:
+For any client to connect to the server, they must: 
 
-1. The othe side of the encripted key.
-2. Security protection.
+1. Have the unique encripted key.
+2. Know the port of the server
 
-Since the server will be exposed to the internet outside of your local network, network security protection is essential.
+From the server side, we will protect the network by:
+
+1. Using the same unique encripted key.
+2. Limiting the amount of times a client can try to log in (Fail2ban).
+3. Changing the default port (Port 22).
+
+Let's start.
 
 ### Key paring
 
@@ -51,42 +62,67 @@ ssh-keygen -t ed25519 -f ~/.ssh/{whatever key name you what to use}
 sh-copy-id -i .ssh/home.pub {hostname}@{ip adress}
 ```
 
-Also, edit the `.ssh/config` file with the following, so you can access the server quickly and easy from the server.
-
-```
-Host {what ever shortcut name you want to use} 
-  HostName {ip adress}
-  User {hostname}
-  IdentityFile ~/.ssh/{whatever key name you used for the key}
-  StrictHostKeyChecking no
-```
-
 - In the server side:
 
 Make sure the new key is copyed in the server: `nano .ssh/authorized_keys`
 
 ```
 sudo  nano /etc/ssh/sshd_config
-      PermitRootLogin no
-      PasswordAuthentication yes
+->      PermitRootLogin no
+->      PasswordAuthentication no
 sudo systemctl reload sshd
 ```
+
+Keeping `PasswordAuthentication yes` enabled will allow anyone without the public-private key pair to try to guess the password. Which we won't.
 
 
 ### Fail2ban
 
-To avoid clients entering the server by brute force.
+To avoid clients entering the server by brute force. Fail2Ban scans log files like /var/log/auth.log and bans IP addresses conducting too many failed login attempts. It does this by updating system firewall rules to reject new connections from those IP addresses, for a configurable amount of time. [Source](https://github.com/fail2ban/fail2ban)
+
+Even if we login via key-pair, [fail2ban is still useful because it can still blacklist IPs hammering your server](https://www.reddit.com/r/pihole/comments/uflft8/ssh_keys_fail2ban/)
 
 ```
 sudo apt install fail2ban
-cd etc/fail2ban
-cp fail2ban.conf fail2ban.local #backup
-cp jail.conf jail.local #backup
+cd /etc/fail2ban
+sudo cp fail2ban.conf fail2ban.local #backup
+sudo cp jail.conf jail.local
 ```
 
-With `nano fail2ban.local` edit the first rows to set the number of max attempts, how much time the ip will be banned, and so forth.
+In  `fail2ban.local` you can edit the defaults to set the number of max attempts, how much time the ip will be banned, and so forth. I keep the default: 
 
-For me, I set 3 fail attempts within 5 min makes the ip be banned 10 hours.
+```
+findtime = 10m
+maxretry = 5
+bantime = 10m
+```
+
+
+### Changing the default Port 22
+
+By default, the firewall is inactive (check `sudo ufw status`).
+
+```
+sudo ufw enable
+sudo cp /etc/ssh/sshd_config /etc/ssh/sshd_config.bak #Backup current sshd setup
+->           Port {whatever set of 5 digits}
+sudo ufw allow {whatever set of 5 digits}/tcp
+```
+
+## Configure client access for easy log in
+
+Edit the `.ssh/config` file with the following, so you can access the server quickly and easy from the server.
+
+```
+Host {host} 
+  HostName {ip adress}
+  User {hostname}
+  Port {port digits}
+  IdentityFile ~/.ssh/{whatever key name you used for the key}
+  StrictHostKeyChecking no
+```
+Setting this file 
+
 
 ## Packages to install after ssh connection
 
