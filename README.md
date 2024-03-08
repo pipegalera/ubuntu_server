@@ -37,7 +37,6 @@ sudo apt install network-manager
 
 ## Configure SSH for secure remote connection
 
-
 Before continuing, make sure you can connect to the server with any computer in the network via `ssh {server username}@{server ip}`. You you connect, start preparing the network security. Since the server will be exposed to the internet outside of your local network, network security protection is essential.
 
 For any client to connect to the server, they must: 
@@ -75,7 +74,6 @@ sudo systemctl reload sshd
 
 Keeping `PasswordAuthentication yes` enabled will allow anyone without the public-private key pair to try to guess the password. Which we won't.
 
-
 ### Fail2ban
 
 To avoid clients entering the server by brute force. Fail2Ban scans log files like /var/log/auth.log and bans IP addresses conducting too many failed login attempts. It does this by updating system firewall rules to reject new connections from those IP addresses, for a configurable amount of time. [Source](https://github.com/fail2ban/fail2ban)
@@ -96,7 +94,6 @@ findtime = 10m
 maxretry = 5
 bantime = 10m
 ```
-
 
 ### Changing the default Port 22
 
@@ -121,7 +118,10 @@ Host {host}
   IdentityFile ~/.ssh/{whatever key name you used for the key}
   StrictHostKeyChecking no
 ```
-Setting this file 
+Setting this file allow to connect from the client simply typing `ssh {host}` instead of `ssh -p {port digits} {hostname}@{ip adress}`
+
+## Allowing connections outside the network: Port Forwarding
+
 
 ## Packages to install after ssh connection
 
