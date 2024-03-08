@@ -30,12 +30,12 @@ Follow: https://ubuntu.com/core/docs/networkmanager/configure-wifi-connections
 
 ## Configure SSH for secure remote connection
 
-Here we make sure that the client must have: 
+Here we make sure that the client have: 
 
 1. An encripted key.
 2. The password of the server.
 
-From the server side, we have to have:
+From the server side, we need:
 
 1. The othe side of the encripted key.
 2. Security protection.
